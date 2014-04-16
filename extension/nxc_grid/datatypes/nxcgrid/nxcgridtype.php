@@ -37,18 +37,20 @@ class NXCGridType extends eZDataType
         $grid = new \NXCGrid();
         $gridWidth = $contentObjectAttribute->attribute('data_int');
         $gridString = $contentObjectAttribute->attribute('data_text');
-        $cellTypes = $grid->getCellTypes();
-        $cellSizes = $grid->getCellSizes();
+//        $cellTypes = $grid->getCellTypes();
+//        $cellSizes = $grid->getCellSizes();
         $gridMaxCols = $grid->getGridsterColls($gridWidth);
         $gridDimensionX = $grid->getGridsterDimensionX();
         $gridDimensionY = $grid->getGridsterDimensionY();
+        $gridMarginX = $grid->getGridsterMarginX();
+        $gridMarginY = $grid->getGridsterMarginY();
         $data =array(   "gridString"     => $gridString,
                         "gridWidth"      => $gridWidth,
                         "gridMaxCols"    => $gridMaxCols,
                         "gridDimensionX" => $gridDimensionX,
                         "gridDimensionY" => $gridDimensionY,
-                        "cellTypes"      => $cellTypes,
-                        "cellSizes"      => $cellSizes);
+                        "gridMarginX"    => $gridMarginX,
+                        "gridMarginY"    => $gridMarginY);
         return $data;
     }
 

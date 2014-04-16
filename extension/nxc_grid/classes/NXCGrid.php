@@ -103,7 +103,7 @@ class NXCGrid
         if (!empty($data)) {
             $node = \eZContentObjectTreeNode::fetch($data['node_id']);
             $tpl = \eZTemplate::factory();
-            $tpl->setVariable("node", $node);
+            $tpl->setVariable("cellNode", $node);
             $tpl->setVariable("class", $node->ClassIdentifier);
             $tpl->setVariable("data", $data);
             $sizeX = $data['size_x'];

@@ -55,6 +55,16 @@ class NXCGrid
         return $dimensionY;
     }
 
+    public function getGridsterMarginX() {
+        $marginX = $this->gridsterParams['MarginX'][0];
+        return $marginX;
+    }
+
+    public function getGridsterMarginY() {
+        $marginY = $this->gridsterParams['MarginY'][0];
+        return $marginY;
+    }
+
     private function convertCellTypes() {
         foreach($this->cellTypes as &$type) {
             $type = $type[0];

@@ -4,8 +4,21 @@ jQuery(document).ready(function(){
         var xDimension = $("#serialisation").data("grid-dimensionx");
         var yDimension = $("#serialisation").data("grid-dimensiony");
         var maxCols = $("#serialisation").data("max-cols");
+        var marginX = $("#serialisation").data("margin-x");
+        var marginY = $("#serialisation").data("margin-y");
+        var cellMaxSizeX = $("#serialisation").data("max-size-x");
+        var cellMaxSizeY = $("#serialisation").data("max-size-y");
+
+        if (typeof(marginX) == "undefined") {
+            marginX = 10;
+        }
+
+        if (typeof(marginY) == "undefined") {
+            marginY = 10;
+        }
+
         var gridster = $(".gridster ul").gridster({
-            widget_margins: [10, 10],
+            widget_margins: [marginX, marginY],
             max_cols: maxCols,
             widget_base_dimensions: [xDimension, yDimension],
             serialize_params: function($w, wgd) {
@@ -14,6 +27,8 @@ jQuery(document).ready(function(){
                     row: wgd.row,
                     size_x: wgd.size_x,
                     size_y: wgd.size_y,
+        	    max_size_x: cellMaxSizeX,
+        	    max_size_y: cellMaxSizeY,		    
                     top: $(wgd.el[0]).css("top"),
                     left: $(wgd.el[0]).css("left"),
                     height: wgd.el[0].clientHeight,
@@ -29,6 +44,8 @@ jQuery(document).ready(function(){
             helper: 'clone',
             resize: {
                 enabled: true,
+	//	max_size:[cellMaxSizeX, cellMaxSizeY],
+	//	min_size:[1,1],
                 stop:function(e,ui, $widget){
                     setData(this);
                 }
@@ -83,7 +100,7 @@ jQuery(document).ready(function(){
         var attributeId = $('.grid-width').attr("attribute_id");
         $("#grid-input").attr("value",JSON.stringify(gridster.serialize()));
         $.ajax({
-            url: "/"+siteaccess+"/temporarygrid/action",
+            url: siteaccess+"/temporarygrid/action",
             type: "POST",
             dataType: 'json',
             data: {
@@ -93,11 +110,7 @@ jQuery(document).ready(function(){
                 'action': "gridbydata"
             },
             success: function(data){
-//                $('.gridster').html(data.result.grid);
-//                $('#serialisation').html(data.result.jsonGrid);
                 location.reload();
-//                var gridsterAjax = gridsterInit();
-//                serialiseGrid(gridster);
 
 
             }
@@ -114,14 +127,14 @@ jQuery(document).ready(function(){
     }
 
     function setData(gridster){
-        setTimeout(gridSession(gridster), 1500);
+        setTimeout(function(){gridSession(gridster);}, 1000);
     }
 
     function gridSession(gridster) {
         var siteaccess = $('#accessname').attr("val");
         $("#grid-input").attr("value",JSON.stringify(gridster.serialize()));
         $.ajax({
-            url: "/"+siteaccess+"/temporarygrid/action",
+            url: siteaccess+"/temporarygrid/action",
             type: "POST",
             data: {
                 'grid': JSON.stringify(gridster.serialize()),
@@ -131,6 +144,3 @@ jQuery(document).ready(function(){
     }
 
 });
-
-
-

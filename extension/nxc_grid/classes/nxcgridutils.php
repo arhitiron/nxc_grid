@@ -245,6 +245,8 @@ class NXCGridUtils {
         classes\NXCGrid::fillingResultsFromJSON($dataFromJSON);
         $jsonData = json_encode($dataFromJSON);
 
+
+
         return $jsonData;
     }
 
