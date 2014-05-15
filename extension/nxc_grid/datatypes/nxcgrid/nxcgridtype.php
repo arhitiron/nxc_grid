@@ -12,10 +12,7 @@ class NXCGridType extends eZDataType
 
     public function __construct()
     {
-
-        $this->eZDataType(self::DATA_TYPE_STRING, ezpI18n::tr('kernel/classes/datatypes', "NXC Grid", 'Datatype name'),
-            array('serialize_supported' => true));
-
+        $this->eZDataType(self::DATA_TYPE_STRING, "NXC Grid", array('serialize_supported' => true));
     }
 
     function validateObjectAttributeHTTPInput($http, $base, $contentObjectAttribute)
@@ -26,32 +23,21 @@ class NXCGridType extends eZDataType
     function storeObjectAttribute($contentObjectAttribute)
     {
         $grid = $contentObjectAttribute->content();
-        $gridString = $grid["gridString"];
-        $contentObjectAttribute->setAttribute("data_text", $gridString);
-
+        $contentObjectAttribute->setAttribute("data_text", $grid["gridString"]);
     }
-
 
     function objectAttributeContent($contentObjectAttribute)
     {
-        $grid = new \NXCGrid();
+        $grid = new NXCGrid();
         $gridWidth = $contentObjectAttribute->attribute('data_int');
-        $gridString = $contentObjectAttribute->attribute('data_text');
-//        $cellTypes = $grid->getCellTypes();
-//        $cellSizes = $grid->getCellSizes();
-        $gridMaxCols = $grid->getGridsterColls($gridWidth);
-        $gridDimensionX = $grid->getGridsterDimensionX();
-        $gridDimensionY = $grid->getGridsterDimensionY();
-        $gridMarginX = $grid->getGridsterMarginX();
-        $gridMarginY = $grid->getGridsterMarginY();
-        $data =array(   "gridString"     => $gridString,
+
+        return array(   "gridString"     => $contentObjectAttribute->attribute('data_text'),
                         "gridWidth"      => $gridWidth,
-                        "gridMaxCols"    => $gridMaxCols,
-                        "gridDimensionX" => $gridDimensionX,
-                        "gridDimensionY" => $gridDimensionY,
-                        "gridMarginX"    => $gridMarginX,
-                        "gridMarginY"    => $gridMarginY);
-        return $data;
+                        "gridMaxCols"    => $grid->getGridsterColls($gridWidth),
+                        "gridDimensionX" => $grid->getGridsterDimensionX(),
+                        "gridDimensionY" => $grid->getGridsterDimensionY(),
+                        "gridMarginX"    => $grid->getGridsterMarginX(),
+                        "gridMarginY"    => $grid->getGridsterMarginY());
     }
 
     function isIndexable()
@@ -71,11 +57,9 @@ class NXCGridType extends eZDataType
     */
     function fetchObjectAttributeHTTPInput($http, $base, $contentObjectAttribute)
     {
-        $grid = new \NXCGrid();
-        $gridWidth = $grid->getGridWidthFromHTTP($http);
-        $gridContent = $grid->getGridContentFromHTTP($http);
-        $contentObjectAttribute->setAttribute("data_int", $gridWidth);
-        $contentObjectAttribute->setAttribute("data_text", $gridContent);
+        $grid = new NXCGrid();
+        $contentObjectAttribute->setAttribute("data_int", $grid->getGridWidthFromHTTP($http));
+        $contentObjectAttribute->setAttribute("data_text", $grid->getGridContentFromHTTP($http));
 
         return true;
     }
@@ -99,17 +83,10 @@ class NXCGridType extends eZDataType
         }
     }
 
-
     function title($contentObjectAttribute, $name = "name")
     {
-        $multioption = $contentObjectAttribute->content();
-        return $multioption->attribute($name);
-    }
-
-    function hasObjectAttributeContent($contentObjectAttribute)
-    {
-        //echo "hasObjectAttributeContent-";
-        return 1;
+        $title = $contentObjectAttribute->content();
+        return $title->attribute($name);
     }
 
     function initializeObjectAttribute($contentObjectAttribute, $currentVersion, $originalContentObjectAttribute)
@@ -136,124 +113,6 @@ class NXCGridType extends eZDataType
         if ($http->hasPostVariable('StoreButton') && $http->postVariable('StoreButton') == 'OK') {
         }
         return true;
-    }
-
-    function classAttributeContent($classAttribute)
-    {
-        $dom = new DOMDocument('1.0', 'utf-8');
-        $xmlString = $classAttribute->attribute('data_text5');
-        $grid = array();
-        if ($xmlString != '') {
-            $success = $dom->loadXML($xmlString);
-            if ($success) {
-                $root = $dom->documentElement;
-                // set the name of the node
-                //$name = $root->getElementsByTagName( "name" )->item( 0 )->textContent;
-                //$optionCounter = $root->getAttribute( "option_counter" );
-                $gridNode = $root->getElementsByTagName("grid")->item(0);
-                $gridList = $gridNode->getElementsByTagName("multioption");
-                //Loop for grid
-
-//                foreach ($gridList as $multioptiondata) {
-//                    $multioption = array();
-//                    $multioption['id'] = $multioptiondata->getAttribute("id");
-//                    $multioption['name'] = $multioptiondata->getAttribute("name");
-//                    $multioption['priority'] = $multioptiondata->getAttribute("priority");
-//                    //$multioption['default_option_id'] = $multioptiondata->getAttribute( "default_option_id" );
-//                    $multioption['options'] = array();
-//                    $optionNode = $multioptiondata->getElementsByTagName("option");
-//                    foreach ($optionNode as $optiondata) {
-//                        $option = array();
-//                        $option['id'] = $optiondata->getAttribute("id");
-//                        $option['option_id'] = $optiondata->getAttribute("option_id");
-//                        $option['value'] = $optiondata->getAttribute("value");
-//                        //$option['additional_price'] = $optiondata->getAttribute( "additional_price" );
-//                        $multioption['options'][] = $option;
-//                    }
-//                    $grid[] = $multioption;
-//                }
-
-            }
-        }
-        return array('multioption_list' => $grid);
-    }
-
-    function toString($contentObjectAttribute)
-    {
-        //echo "toString-";
-        $content = $contentObjectAttribute->attribute('content');
-
-        $multioptionArray = array();
-
-        $setName = $content->attribute('name');
-        $multioptionArray[] = $setName;
-
-        $multioptionList = $content->attribute('multioption_list');
-
-        foreach ($multioptionList as $key => $option) {
-            $optionArray = array();
-            $optionArray[] = $option['name'];
-            //$optionArray[] = $option['default_option_id'];
-            foreach ($option['optionlist'] as $key => $value) {
-                $optionArray[] = $value['value'];
-            }
-            $multioptionArray[] = eZStringUtils::implodeStr($optionArray, '|');
-        }
-        return eZStringUtils::implodeStr($multioptionArray, "&");
-    }
-
-
-    function fromString($contentObjectAttribute, $string)
-    {
-        //echo "fromString-";
-        if ($string == '')
-            return true;
-
-        $multioptionArray = eZStringUtils::explodeStr($string, '&');
-
-        $multioption = new NXCGrid();
-
-        $multioption->OptionCounter = 0;
-        $multioption->Options = array();
-        $multioption->Name = array_shift($multioptionArray);
-        $priority = 1;
-        foreach ($multioptionArray as $gridtr) {
-            $optionArray = eZStringUtils::explodeStr($gridtr, '|');
-
-
-            $newID = $multioption->addMultiOption(array_shift($optionArray),
-                $priority/*,
-                                            array_shift( $optionArray )*/);
-            $optionID = 0;
-            $count = count($optionArray);
-            for ($i = 0; $i < $count; $i += 2) {
-                $multioption->addOption($newID, $optionID, array_shift($optionArray) /*, array_shift( $optionArray )*/);
-                $optionID++;
-            }
-            $priority++;
-        }
-
-        $contentObjectAttribute->setAttribute("data_text", $multioption->xmlString());
-
-        return $multioption;
-
-    }
-
-    function serializeContentClassAttribute($classAttribute, $attributeNode, $attributeParametersNode)
-    {
-        //echo "serializeContentClassAttribute-";
-        $defaultValue = $classAttribute->attribute('data_text5');
-        $dom = $attributeParametersNode->ownerDocument;
-        $defaultValueNode = $dom->createElement('default-value');
-        $defaultValueNode->appendChild($dom->createTextNode($defaultValue));
-        $attributeParametersNode->appendChild($defaultValueNode);
-    }
-
-    function unserializeContentClassAttribute($classAttribute, $attributeNode, $attributeParametersNode)
-    {
-        //echo "unserializeContentClassAttribute-";
-        $defaultValue = $attributeParametersNode->getElementsByTagName('default-value')->item(0)->textContent;
-        $classAttribute->setAttribute('data_text5', $defaultValue);
     }
 
     function serializeContentObjectAttribute($package, $objectAttribute)

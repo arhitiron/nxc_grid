@@ -14,7 +14,7 @@ class NXCGrid
     private $gridsterParams;
 
     public function __construct() {
-        $this->ini = \eZINI::instance( 'grid.ini' );
+        $this->ini = eZINI::instance( 'grid.ini' );
         $this->cellTypes = $this->ini->variableArray("CellType", "Type");
         $this->cellSize = $this->ini->variableArray("CellSize", "Size");
         $this->gridsterParams = $this->ini->variableArray("Gridster", "Params");
