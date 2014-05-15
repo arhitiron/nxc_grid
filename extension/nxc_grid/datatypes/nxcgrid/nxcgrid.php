@@ -59,22 +59,5 @@ class NXCGrid
     public function getGridsterParam($name) {
         return $this->gridsterParams["$name"][0];
     }
-
-//    public function getGridsterDimensionX() {
-//        return $this->gridsterParams['DimensionX'][0];
-//    }
-//
-//    public function getGridsterDimensionY() {
-//        return $this->gridsterParams['DimensionY'][0];
-//
-//    }
-//
-//    public function getGridsterMarginX() {
-//        return $this->gridsterParams['MarginX'][0];
-//    }
-//
-//    public function getGridsterMarginY() {
-//        return $this->gridsterParams['MarginY'][0];
-//    }
 }
 ?>

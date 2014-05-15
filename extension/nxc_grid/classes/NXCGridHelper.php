@@ -30,21 +30,23 @@ class NXCGridHelper
      */
 
     public static function getTemplateByData($data = array()){
-        if (!empty($data)) {
+        if (!empty($data) && isset($data['node_id'])) {
             $node = eZContentObjectTreeNode::fetch($data['node_id']);
-            $tpl = eZTemplate::factory();
-            $tpl->setVariable('cellNode', $node);
-            $tpl->setVariable('class', $node->ClassIdentifier);
-            $tpl->setVariable('data', $data);
-            $template = self::getTemplateNameByTypeDimension($node->ClassIdentifier, array($data['size_x'], $data['size_y']) );
-            $extraParameters = false;
-            $checkUri = $tpl->loadURIRoot('design:content/grid/'.$template, false, $extraParameters);
-            if (!empty($checkUri)) {
-                $result = $tpl->fetch('design:content/grid/'.$template, false, true);
+            if ($node && $node != null) {
+                $tpl = eZTemplate::factory();
+                $tpl->setVariable('cellNode', $node);
+                $tpl->setVariable('class', $node->ClassIdentifier);
+                $tpl->setVariable('data', $data);
+                $template = self::getTemplateNameByTypeDimension($node->ClassIdentifier, array($data['size_x'], $data['size_y']) );
+                $extraParameters = false;
+                $checkUri = $tpl->loadURIRoot('design:content/grid/'.$template, false, $extraParameters);
+                if (!empty($checkUri)) {
+                    $result = $tpl->fetch('design:content/grid/'.$template, false, true);
+                } else {
+                $result = $tpl->fetch('design:content/grid/cell_default.tpl', false, true);
+                }
                 return $result['result_text'];
             }
-            $result = $tpl->fetch('design:content/grid/cell_default.tpl', false, true);
-            return $result['result_text'];
         }
 
     }
