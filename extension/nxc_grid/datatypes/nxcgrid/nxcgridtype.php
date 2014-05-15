@@ -1,14 +1,14 @@
 <?php
 /**
- * @class   NXCGridUtils
+ * @class   NXCGridType
  * @author  ant@nxc.no
  * @date    1 Nov 2013
  * @author ant
  */
 class NXCGridType extends eZDataType
 {
-    const DEFAULT_NAME_VARIABLE = "_nxcgrid_default_name_";
-    const DATA_TYPE_STRING = "nxcgrid";
+    const DEFAULT_NAME_VARIABLE = '_nxcgrid_default_name_';
+    const DATA_TYPE_STRING = 'nxcgrid';
 
     public function __construct()
     {
@@ -23,21 +23,20 @@ class NXCGridType extends eZDataType
     function storeObjectAttribute($contentObjectAttribute)
     {
         $grid = $contentObjectAttribute->content();
-        $contentObjectAttribute->setAttribute("data_text", $grid["gridString"]);
+        $contentObjectAttribute->setAttribute('data_text', $grid['gridString']);
     }
 
     function objectAttributeContent($contentObjectAttribute)
     {
-        $grid = new NXCGrid();
         $gridWidth = $contentObjectAttribute->attribute('data_int');
 
-        return array(   "gridString"     => $contentObjectAttribute->attribute('data_text'),
-                        "gridWidth"      => $gridWidth,
-                        "gridMaxCols"    => $grid->getGridsterColls($gridWidth),
-                        "gridDimensionX" => $grid->getGridsterDimensionX(),
-                        "gridDimensionY" => $grid->getGridsterDimensionY(),
-                        "gridMarginX"    => $grid->getGridsterMarginX(),
-                        "gridMarginY"    => $grid->getGridsterMarginY());
+        return array(   'gridString'     => $contentObjectAttribute->attribute('data_text'),
+                        'gridWidth'      => $gridWidth,
+                        'gridMaxCols'    => NXCGrid::getInstance()->getGridsterColls($gridWidth),
+                        'gridDimensionX' => NXCGrid::getInstance()->getGridsterParam('DimensionX'),
+                        'gridDimensionY' => NXCGrid::getInstance()->getGridsterParam('DimensionY'),
+                        'gridMarginX'    => NXCGrid::getInstance()->getGridsterParam('MarginX'),
+                        'gridMarginY'    => NXCGrid::getInstance()->getGridsterParam('MarginY'));
     }
 
     function isIndexable()
@@ -48,7 +47,7 @@ class NXCGridType extends eZDataType
 
     function metaData($contentObjectAttribute)
     {
-        return $contentObjectAttribute->attribute("data_text");
+        return $contentObjectAttribute->attribute('data_text');
     }
 
     /*!
@@ -57,9 +56,8 @@ class NXCGridType extends eZDataType
     */
     function fetchObjectAttributeHTTPInput($http, $base, $contentObjectAttribute)
     {
-        $grid = new NXCGrid();
-        $contentObjectAttribute->setAttribute("data_int", $grid->getGridWidthFromHTTP($http));
-        $contentObjectAttribute->setAttribute("data_text", $grid->getGridContentFromHTTP($http));
+        $contentObjectAttribute->setAttribute('data_int', NXCGrid::getInstance()->getGridWidthFromHTTP($http));
+        $contentObjectAttribute->setAttribute('data_text', NXCGrid::getInstance()->getGridContentFromHTTP($http));
 
         return true;
     }
@@ -83,7 +81,7 @@ class NXCGridType extends eZDataType
         }
     }
 
-    function title($contentObjectAttribute, $name = "name")
+    function title($contentObjectAttribute, $name = 'name')
     {
         $title = $contentObjectAttribute->content();
         return $title->attribute($name);
@@ -96,12 +94,12 @@ class NXCGridType extends eZDataType
             if ($multioption) {
                 $contentClassAttribute = $contentObjectAttribute->contentClassAttribute();
                 $multioption->setName($contentClassAttribute->attribute('data_text1'));
-                $contentObjectAttribute->setAttribute("data_text", $multioption->xmlString());
+                $contentObjectAttribute->setAttribute('data_text', $multioption->xmlString());
                 $contentObjectAttribute->setContent($multioption);
             }
         } else {
-            $dataText = $originalContentObjectAttribute->attribute("data_text");
-            $contentObjectAttribute->setAttribute("data_text", $dataText);
+            $dataText = $originalContentObjectAttribute->attribute('data_text');
+            $contentObjectAttribute->setAttribute('data_text', $dataText);
         }
     }
 
@@ -117,7 +115,7 @@ class NXCGridType extends eZDataType
 
     function serializeContentObjectAttribute($package, $objectAttribute)
     {
-        echo "serializeContentObjectAttribute-";
+//        echo "serializeContentObjectAttribute-";
         $node = $this->createContentObjectAttributeDOMNode($objectAttribute);
 
         $dom = new DOMDocument('1.0', 'utf-8');
@@ -140,6 +138,6 @@ class NXCGridType extends eZDataType
 
 }
 
-eZDataType::register(NXCGridType::DATA_TYPE_STRING, "NXCGridType");
+eZDataType::register(NXCGridType::DATA_TYPE_STRING, 'NXCGridType');
 
 ?>

@@ -13,11 +13,22 @@ class NXCGrid
     private $cellSize;
     private $gridsterParams;
 
-    public function __construct() {
+    public static $instance;
+
+    public static function getInstance() {
+
+        if (self::$instance != null)
+            return self::$instance;
+
+        self::$instance = new NXCGrid();
+        return self::$instance;
+    }
+
+    private function __construct() {
         $this->ini = eZINI::instance( 'grid.ini' );
-        $this->cellTypes = $this->ini->variableArray("CellType", "Type");
-        $this->cellSize = $this->ini->variableArray("CellSize", "Size");
-        $this->gridsterParams = $this->ini->variableArray("Gridster", "Params");
+        $this->cellTypes = $this->ini->variableArray('CellType', 'Type');
+        $this->cellSize = $this->ini->variableArray('CellSize', 'Size');
+        $this->gridsterParams = $this->ini->variableArray('Gridster', 'Params');
     }
 
     public function getGridContentFromHTTP($http) {
@@ -45,48 +56,25 @@ class NXCGrid
         return $cols;
     }
 
-    public function getGridsterDimensionX() {
-        $dimensionX = $this->gridsterParams['DimensionX'][0];
-        return $dimensionX;
+    public function getGridsterParam($name) {
+        return $this->gridsterParams["$name"][0];
     }
 
-    public function getGridsterDimensionY() {
-        $dimensionY = $this->gridsterParams['DimensionY'][0];
-        return $dimensionY;
-    }
-
-    public function getGridsterMarginX() {
-        $marginX = $this->gridsterParams['MarginX'][0];
-        return $marginX;
-    }
-
-    public function getGridsterMarginY() {
-        $marginY = $this->gridsterParams['MarginY'][0];
-        return $marginY;
-    }
-
-    private function convertCellTypes() {
-        foreach($this->cellTypes as &$type) {
-            $type = $type[0];
-        }
-    }
-
-    private function convertCellSizes() {
-        foreach($this->cellSize as &$size) {
-            $size = $size[0];
-        }
-    }
-
-    public function getCellTypes() {
-        $this->convertCellTypes();
-        return $this->cellTypes;
-    }
-    public function getCellSizes() {
-        $this->convertCellSizes();
-        return $this->cellSize;
-    }
-
-
-
+//    public function getGridsterDimensionX() {
+//        return $this->gridsterParams['DimensionX'][0];
+//    }
+//
+//    public function getGridsterDimensionY() {
+//        return $this->gridsterParams['DimensionY'][0];
+//
+//    }
+//
+//    public function getGridsterMarginX() {
+//        return $this->gridsterParams['MarginX'][0];
+//    }
+//
+//    public function getGridsterMarginY() {
+//        return $this->gridsterParams['MarginY'][0];
+//    }
 }
 ?>

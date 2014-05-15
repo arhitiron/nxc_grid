@@ -33,10 +33,10 @@ class NXCGridUtils {
     {
         switch ( $operatorName )
         {
-            case "getgrid":
+            case 'getgrid':
                 $operatorValue = $this->getTemplateFromJSON( $namedParameters['data']);
                 break;
-            case "renderfrontendgrid":
+            case 'renderfrontendgrid':
                 $operatorValue = $this->getFrontendTemplateFromJSON( $namedParameters['data']);
                 break;
         }
@@ -46,11 +46,11 @@ class NXCGridUtils {
         $http = eZHTTPTool::instance();
         $viewSelector = false;
 
-        if (isset($_SESSION["NXCGrid"]) && $_SESSION["NXCGrid"] != "")
+        if (isset($_SESSION['NXCGrid']) && $_SESSION['NXCGrid'] != "")
         {
-            $dataJSONFromSession = $_SESSION["NXCGrid"];
+            $dataJSONFromSession = $_SESSION['NXCGrid'];
             $dataArray = json_decode($dataJSONFromSession, true);
-            unset($_SESSION["NXCGrid"]);
+            unset($_SESSION['NXCGrid']);
         } else {
             $dataArray = json_decode($json, true);
         }
@@ -60,13 +60,13 @@ class NXCGridUtils {
             $NodeId = $SelectedNodeIDArray[0];
             $post = $http->attribute('post');
             foreach($post['CustomActionButton'] as $key => $value) {
-                if (strpos($key, "_custom_attribute") > 0) {
+                if (strpos($key, '_custom_attribute') > 0) {
                     $viewSelector = $key;
                     break;
                 }
             }
             if ($viewSelector){
-                $viewSelector = explode("-", $viewSelector);
+                $viewSelector = explode('-', $viewSelector);
                 $viewSelector = $viewSelector[count($viewSelector)-1];
                 $dataArray[$viewSelector]['node_id'] = $NodeId;
             }
@@ -81,7 +81,7 @@ class NXCGridUtils {
     }
 
     private function getFrontendTemplateFromJSON($json) {
-        $result = "";
+        $result = '';
         $dataArray = json_decode($json, true);
         foreach ($dataArray as $item) {
             $result .= NXCGridHelper::getTemplateByData($item);
