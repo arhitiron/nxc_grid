@@ -1,6 +1,6 @@
 <?php
 /**
- * @class   NCXGrid
+ * @class   NXCGridHelper
  * @author  ant@nxc.no
  * @date    4 Nov 2013
  * @author ant
